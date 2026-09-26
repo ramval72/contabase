@@ -1,0 +1,1100 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contabase - Sistema Contable Perú</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 5px;
+        }
+
+        .header p {
+            font-size: 1em;
+            opacity: 0.9;
+        }
+
+        .nav-tabs {
+            display: flex;
+            background: #f5f5f5;
+            border-bottom: 2px solid #ddd;
+            overflow-x: auto;
+        }
+
+        .nav-tabs button {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            background: none;
+            cursor: pointer;
+            font-size: 0.95em;
+            font-weight: 500;
+            color: #666;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+            white-space: nowrap;
+        }
+
+        .nav-tabs button:hover {
+            background: #e8e8e8;
+        }
+
+        .nav-tabs button.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .section-title {
+            font-size: 1.5em;
+            color: #333;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 0.95em;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 60px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        button.btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        button.btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        button.btn:active {
+            transform: translateY(0);
+        }
+
+        button.btn-secondary {
+            background: #666;
+        }
+
+        button.btn-secondary:hover {
+            box-shadow: 0 5px 20px rgba(100, 100, 100, 0.4);
+        }
+
+        .table-container {
+            overflow-x: auto;
+            margin-top: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+        }
+
+        table thead {
+            background: #f5f5f5;
+            font-weight: 600;
+            color: #333;
+        }
+
+        table th,
+        table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        table tr:hover {
+            background: #f9f9f9;
+        }
+
+        table td.number {
+            text-align: right;
+            font-family: 'Courier New', monospace;
+        }
+
+        .alert {
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            border-left: 4px solid;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border-color: #28a745;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border-color: #f5c6cb;
+        }
+
+        .alert-warning {
+            background: #fff3cd;
+            color: #856404;
+            border-color: #ffc107;
+        }
+
+        .alert-info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border-color: #bee5eb;
+        }
+
+        .summary-box {
+            background: #f0f4ff;
+            border: 2px solid #667eea;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .summary-box h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .summary-item {
+            background: white;
+            padding: 15px;
+            border-radius: 5px;
+            border-left: 4px solid #667eea;
+        }
+
+        .summary-item label {
+            display: block;
+            color: #666;
+            font-size: 0.9em;
+            margin-bottom: 5px;
+        }
+
+        .summary-item .value {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #333;
+            font-family: 'Courier New', monospace;
+        }
+
+        .status-balanced {
+            color: #28a745;
+        }
+
+        .status-unbalanced {
+            color: #dc3545;
+        }
+
+        .line-items {
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+
+        .line-item {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr auto;
+            gap: 10px;
+            margin-bottom: 10px;
+            padding: 10px;
+            background: white;
+            border-radius: 3px;
+            align-items: end;
+        }
+
+        .line-item input {
+            padding: 8px;
+            font-size: 0.9em;
+        }
+
+        .line-item button {
+            padding: 8px 15px;
+            font-size: 0.9em;
+        }
+
+        .no-data {
+            text-align: center;
+            padding: 40px 20px;
+            color: #999;
+        }
+
+        .pagination {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .pagination button {
+            padding: 8px 12px;
+            font-size: 0.9em;
+        }
+
+        .pagination button.active {
+            background: #667eea !important;
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .line-item {
+                grid-template-columns: 1fr;
+            }
+
+            .nav-tabs {
+                overflow-x: auto;
+            }
+
+            .header h1 {
+                font-size: 1.8em;
+            }
+
+            table {
+                font-size: 0.9em;
+            }
+
+            table th,
+            table td {
+                padding: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📊 Contabase</h1>
+            <p>Sistema Contable Simple para Pequeñas Empresas - Perú 2026</p>
+        </div>
+
+        <div class="nav-tabs">
+            <button class="nav-btn active" data-tab="dashboard">Dashboard</button>
+            <button class="nav-btn" data-tab="journal">Libro Diario</button>
+            <button class="nav-btn" data-tab="ledger">Libro Mayor</button>
+            <button class="nav-btn" data-tab="trial-balance">Balance de Comprobación</button>
+            <button class="nav-btn" data-tab="cash-book">Caja y Bancos</button>
+            <button class="nav-btn" data-tab="new-entry">Nuevo Asiento</button>
+            <button class="nav-btn" data-tab="accounts">Catálogo de Cuentas</button>
+        </div>
+
+        <div class="content">
+            <!-- DASHBOARD -->
+            <div id="dashboard" class="tab-content active">
+                <div class="section-title">📈 Resumen de Estado Contable</div>
+                
+                <div id="dashboard-alerts"></div>
+
+                <div class="summary-box">
+                    <h3>Estado Actual del Sistema</h3>
+                    <div class="summary-grid">
+                        <div class="summary-item">
+                            <label>Total Débitos</label>
+                            <div class="value" id="total-debits">0.00</div>
+                        </div>
+                        <div class="summary-item">
+                            <label>Total Créditos</label>
+                            <div class="value" id="total-credits">0.00</div>
+                        </div>
+                        <div class="summary-item">
+                            <label>Diferencia</label>
+                            <div class="value" id="total-diff">0.00</div>
+                        </div>
+                        <div class="summary-item">
+                            <label>Estado</label>
+                            <div class="value" id="balance-status">DESEQUILIBRADO</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="summary-box">
+                    <h3>Saldo de Caja y Bancos</h3>
+                    <div class="summary-grid">
+                        <div class="summary-item">
+                            <label>Caja (10.1)</label>
+                            <div class="value" id="cash-balance">0.00</div>
+                        </div>
+                        <div class="summary-item">
+                            <label>Bancos (10.2)</label>
+                            <div class="value" id="bank-balance">0.00</div>
+                        </div>
+                        <div class="summary-item">
+                            <label>Total Disponible</label>
+                            <div class="value" id="total-available">0.00</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="summary-box">
+                    <h3>Información del Sistema</h3>
+                    <p><strong>Asientos Registrados:</strong> <span id="entry-count">0</span></p>
+                    <p><strong>Período Contable:</strong> Enero - Diciembre 2026</p>
+                    <p><strong>Normatividad:</strong> Perú - PCGE 2026</p>
+                    <p><strong>Última Actualización:</strong> <span id="last-update">-</span></p>
+                </div>
+            </div>
+
+            <!-- LIBRO DIARIO -->
+            <div id="journal" class="tab-content">
+                <div class="section-title">📋 Libro Diario</div>
+                <p style="margin-bottom: 20px; color: #666;">Registro cronológico de todos los asientos contables. Fuente: movimientos de caja, bancos, compras, ventas y planilla.</p>
+                
+                <div class="table-container">
+                    <table id="journal-table">
+                        <thead>
+                            <tr>
+                                <th>Fecha</th>
+                                <th>Descripción</th>
+                                <th>Documento</th>
+                                <th>Cuenta</th>
+                                <th class="number">Debe</th>
+                                <th class="number">Haber</th>
+                            </tr>
+                        </thead>
+                        <tbody id="journal-body">
+                        </tbody>
+                    </table>
+                </div>
+                <div id="journal-empty" class="no-data" style="display: none;">
+                    No hay asientos registrados aún.
+                </div>
+            </div>
+
+            <!-- LIBRO MAYOR -->
+            <div id="ledger" class="tab-content">
+                <div class="section-title">📊 Libro Mayor</div>
+                <p style="margin-bottom: 20px; color: #666;">Movimientos por cada cuenta contable con saldos acumulados.</p>
+
+                <div class="form-group">
+                    <label>Filtrar por Cuenta:</label>
+                    <select id="ledger-filter">
+                        <option value="">-- Todas las cuentas --</option>
+                    </select>
+                </div>
+
+                <div class="table-container">
+                    <table id="ledger-table">
+                        <thead>
+                            <tr>
+                                <th>Cuenta</th>
+                                <th>Nombre</th>
+                                <th class="number">Debe</th>
+                                <th class="number">Haber</th>
+                                <th class="number">Saldo</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ledger-body">
+                        </tbody>
+                    </table>
+                </div>
+                <div id="ledger-empty" class="no-data" style="display: none;">
+                    No hay movimientos en el período.
+                </div>
+            </div>
+
+            <!-- BALANCE DE COMPROBACIÓN -->
+            <div id="trial-balance" class="tab-content">
+                <div class="section-title">⚖️ Balance de Comprobación</div>
+                <p style="margin-bottom: 20px; color: #666;">Verificación de que los débitos y créditos coincidan. Este es el control clave antes de generar reportes financieros.</p>
+
+                <div class="summary-box">
+                    <h3>Validación de Saldos</h3>
+                    <div class="summary-grid">
+                        <div class="summary-item">
+                            <label>Total Débitos</label>
+                            <div class="value" id="tb-debits">0.00</div>
+                        </div>
+                        <div class="summary-item">
+                            <label>Total Créditos</label>
+                            <div class="value" id="tb-credits">0.00</div>
+                        </div>
+                        <div class="summary-item">
+                            <label>Diferencia</label>
+                            <div class="value" id="tb-diff">0.00</div>
+                        </div>
+                        <div class="summary-item">
+                            <label>Estado</label>
+                            <div class="value status-unbalanced" id="tb-status">NO CUADRA</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="table-container">
+                    <table id="trial-balance-table">
+                        <thead>
+                            <tr>
+                                <th>Código</th>
+                                <th>Cuenta</th>
+                                <th class="number">Débitos</th>
+                                <th class="number">Créditos</th>
+                                <th class="number">Saldo</th>
+                            </tr>
+                        </thead>
+                        <tbody id="trial-balance-body">
+                        </tbody>
+                    </table>
+                </div>
+                <div id="trial-balance-empty" class="no-data" style="display: none;">
+                    No hay datos disponibles.
+                </div>
+            </div>
+
+            <!-- CAJA Y BANCOS -->
+            <div id="cash-book" class="tab-content">
+                <div class="section-title">💰 Caja y Bancos</div>
+                <p style="margin-bottom: 20px; color: #666;">Base de la información operativa. Todos los movimientos de caja (10.1) y bancos (10.2).</p>
+
+                <div class="table-container">
+                    <table id="cash-book-table">
+                        <thead>
+                            <tr>
+                                <th>Fecha</th>
+                                <th>Descripción</th>
+                                <th>Documento</th>
+                                <th>Cuenta</th>
+                                <th class="number">Ingreso</th>
+                                <th class="number">Egreso</th>
+                                <th class="number">Saldo</th>
+                            </tr>
+                        </thead>
+                        <tbody id="cash-book-body">
+                        </tbody>
+                    </table>
+                </div>
+                <div id="cash-book-empty" class="no-data" style="display: none;">
+                    No hay movimientos registrados.
+                </div>
+            </div>
+
+            <!-- NUEVO ASIENTO -->
+            <div id="new-entry" class="tab-content">
+                <div class="section-title">✍️ Registrar Nuevo Asiento Contable</div>
+
+                <div class="form-group">
+                    <label>Fecha del Asiento:</label>
+                    <input type="date" id="entry-date" value="2026-01-15">
+                </div>
+
+                <div class="form-group">
+                    <label>Descripción (concepto):</label>
+                    <input type="text" id="entry-description" placeholder="Ej: Pago de servicios">
+                </div>
+
+                <div class="form-group">
+                    <label>Documento de Referencia:</label>
+                    <input type="text" id="entry-document" placeholder="Ej: FAC-001, REC-001, PLAN-001">
+                </div>
+
+                <div class="line-items" id="line-items-container">
+                    <h3 style="margin-bottom: 15px;">Líneas del Asiento</h3>
+                    <div id="lines-list"></div>
+                </div>
+
+                <button class="btn" onclick="addLineItem()">+ Agregar Línea</button>
+
+                <div style="margin-top: 20px;">
+                    <button class="btn" onclick="saveEntry()">Guardar Asiento</button>
+                    <button class="btn btn-secondary" onclick="clearForm()" style="margin-left: 10px;">Limpiar Formulario</button>
+                </div>
+
+                <div id="entry-message" style="margin-top: 20px;"></div>
+            </div>
+
+            <!-- CATÁLOGO DE CUENTAS -->
+            <div id="accounts" class="tab-content">
+                <div class="section-title">📚 Catálogo de Cuentas PCGE</div>
+                <p style="margin-bottom: 20px; color: #666;">Estructura de cuentas contables según la normatividad peruana. Período 2026.</p>
+
+                <div class="table-container">
+                    <table id="accounts-table">
+                        <thead>
+                            <tr>
+                                <th>Código</th>
+                                <th>Nombre</th>
+                                <th>Tipo</th>
+                                <th>Naturaleza</th>
+                            </tr>
+                        </thead>
+                        <tbody id="accounts-body">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ==================== DATOS BASE ====================
+        const defaultAccounts = [
+            { code: '10', name: 'ACTIVO', type: 'section', nature: 'DEBIT' },
+            { code: '10.1', name: 'Caja', type: 'account', nature: 'DEBIT' },
+            { code: '10.2', name: 'Bancos', type: 'account', nature: 'DEBIT' },
+            { code: '10.3', name: 'Clientes', type: 'account', nature: 'DEBIT' },
+            { code: '10.4', name: 'Mercaderías', type: 'account', nature: 'DEBIT' },
+            { code: '20', name: 'PASIVO', type: 'section', nature: 'CREDIT' },
+            { code: '20.1', name: 'Proveedores', type: 'account', nature: 'CREDIT' },
+            { code: '20.2', name: 'Tributos por pagar', type: 'account', nature: 'CREDIT' },
+            { code: '20.3', name: 'Remuneraciones por pagar', type: 'account', nature: 'CREDIT' },
+            { code: '30', name: 'PATRIMONIO', type: 'section', nature: 'CREDIT' },
+            { code: '30.1', name: 'Capital', type: 'account', nature: 'CREDIT' },
+            { code: '30.2', name: 'Resultado del ejercicio', type: 'account', nature: 'CREDIT' },
+            { code: '40', name: 'INGRESOS', type: 'section', nature: 'CREDIT' },
+            { code: '40.1', name: 'Ventas', type: 'account', nature: 'CREDIT' },
+            { code: '40.2', name: 'Otros ingresos', type: 'account', nature: 'CREDIT' },
+            { code: '50', name: 'GASTOS', type: 'section', nature: 'DEBIT' },
+            { code: '50.1', name: 'Compras', type: 'account', nature: 'DEBIT' },
+            { code: '50.2', name: 'Sueldos y salarios', type: 'account', nature: 'DEBIT' },
+            { code: '50.3', name: 'Servicios', type: 'account', nature: 'DEBIT' },
+            { code: '50.4', name: 'Alquileres', type: 'account', nature: 'DEBIT' },
+            { code: '50.5', name: 'Impuestos', type: 'account', nature: 'DEBIT' }
+        ];
+
+        const sampleEntries = [
+            {
+                id: 'sample-1',
+                date: '2026-01-02',
+                description: 'Aporte inicial de capital',
+                document: 'DOC-001',
+                lines: [
+                    { accountCode: '10.1', debit: 20000, credit: 0 },
+                    { accountCode: '30.1', debit: 0, credit: 20000 }
+                ]
+            },
+            {
+                id: 'sample-2',
+                date: '2026-01-05',
+                description: 'Venta de servicios al contado',
+                document: 'FAC-001',
+                lines: [
+                    { accountCode: '10.1', debit: 5000, credit: 0 },
+                    { accountCode: '40.1', debit: 0, credit: 5000 }
+                ]
+            },
+            {
+                id: 'sample-3',
+                date: '2026-01-08',
+                description: 'Pago de alquiler',
+                document: 'REC-001',
+                lines: [
+                    { accountCode: '50.4', debit: 1800, credit: 0 },
+                    { accountCode: '10.1', debit: 0, credit: 1800 }
+                ]
+            },
+            {
+                id: 'sample-4',
+                date: '2026-01-12',
+                description: 'Compra de mercadería a crédito',
+                document: 'OC-010',
+                lines: [
+                    { accountCode: '10.4', debit: 3000, credit: 0 },
+                    { accountCode: '20.1', debit: 0, credit: 3000 }
+                ]
+            },
+            {
+                id: 'sample-5',
+                date: '2026-01-18',
+                description: 'Pago de planilla del personal',
+                document: 'PLAN-001',
+                lines: [
+                    { accountCode: '50.2', debit: 2400, credit: 0 },
+                    { accountCode: '10.1', debit: 0, credit: 2400 }
+                ]
+            }
+        ];
+
+        // ==================== ESTADO GLOBAL ====================
+        let journalEntries = JSON.parse(localStorage.getItem('journalEntries')) || sampleEntries;
+
+        // ==================== FUNCIONES CONTABLES ====================
+        function buildLedger() {
+            const ledger = new Map();
+            
+            for (const entry of journalEntries) {
+                for (const line of entry.lines) {
+                    const code = line.accountCode;
+                    if (!ledger.has(code)) {
+                        const account = defaultAccounts.find(a => a.code === code);
+                        ledger.set(code, {
+                            code,
+                            name: account?.name || code,
+                            debit: 0,
+                            credit: 0,
+                            nature: account?.nature || 'DEBIT'
+                        });
+                    }
+                    const item = ledger.get(code);
+                    item.debit += line.debit || 0;
+                    item.credit += line.credit || 0;
+                }
+            }
+
+            return Array.from(ledger.values()).sort((a, b) => a.code.localeCompare(b.code));
+        }
+
+        function buildTrialBalance() {
+            return buildLedger().map(row => ({
+                code: row.code,
+                name: row.name,
+                debit: row.debit,
+                credit: row.credit,
+                balance: row.nature === 'DEBIT' ? row.debit - row.credit : row.credit - row.debit,
+                nature: row.nature
+            }));
+        }
+
+        function buildCashBook() {
+            const entries = [];
+            for (const entry of journalEntries) {
+                for (const line of entry.lines) {
+                    if (['10.1', '10.2'].includes(line.accountCode)) {
+                        entries.push({
+                            date: entry.date,
+                            description: entry.description,
+                            document: entry.document,
+                            accountCode: line.accountCode,
+                            debit: line.debit || 0,
+                            credit: line.credit || 0
+                        });
+                    }
+                }
+            }
+            return entries.sort((a, b) => new Date(a.date) - new Date(b.date));
+        }
+
+        function calculateCashBalance() {
+            const cashBook = buildCashBook();
+            let balance = 0;
+            for (const row of cashBook) {
+                balance += row.debit - row.credit;
+            }
+            return balance;
+        }
+
+        function getTotals() {
+            let totalDebit = 0, totalCredit = 0;
+            for (const entry of journalEntries) {
+                for (const line of entry.lines) {
+                    totalDebit += line.debit || 0;
+                    totalCredit += line.credit || 0;
+                }
+            }
+            return { totalDebit, totalCredit };
+        }
+
+        // ==================== RENDERIZADO ====================
+        function renderJournal() {
+            const tbody = document.getElementById('journal-body');
+            const empty = document.getElementById('journal-empty');
+            tbody.innerHTML = '';
+
+            if (journalEntries.length === 0) {
+                empty.style.display = 'block';
+                return;
+            }
+            empty.style.display = 'none';
+
+            const flatLines = [];
+            for (const entry of journalEntries) {
+                for (const line of entry.lines) {
+                    const account = defaultAccounts.find(a => a.code === line.accountCode);
+                    flatLines.push({
+                        date: entry.date,
+                        description: entry.description,
+                        document: entry.document,
+                        accountCode: line.accountCode,
+                        accountName: account?.name || line.accountCode,
+                        debit: line.debit || 0,
+                        credit: line.credit || 0
+                    });
+                }
+            }
+
+            for (const line of flatLines) {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${line.date}</td>
+                    <td>${line.description}</td>
+                    <td>${line.document}</td>
+                    <td>${line.accountCode} - ${line.accountName}</td>
+                    <td class="number">${line.debit.toFixed(2)}</td>
+                    <td class="number">${line.credit.toFixed(2)}</td>
+                `;
+                tbody.appendChild(row);
+            }
+        }
+
+        function renderLedger() {
+            const tbody = document.getElementById('ledger-body');
+            const ledger = buildLedger();
+            tbody.innerHTML = '';
+
+            for (const row of ledger) {
+                const trRow = document.createElement('tr');
+                trRow.innerHTML = `
+                    <td>${row.code}</td>
+                    <td>${row.name}</td>
+                    <td class="number">${row.debit.toFixed(2)}</td>
+                    <td class="number">${row.credit.toFixed(2)}</td>
+                    <td class="number">${(row.nature === 'DEBIT' ? row.debit - row.credit : row.credit - row.debit).toFixed(2)}</td>
+                `;
+                tbody.appendChild(trRow);
+            }
+        }
+
+        function renderTrialBalance() {
+            const tbody = document.getElementById('trial-balance-body');
+            const tb = buildTrialBalance();
+            tbody.innerHTML = '';
+
+            let totalDebit = 0, totalCredit = 0;
+
+            for (const row of tb) {
+                if (row.debit !== 0 || row.credit !== 0) {
+                    const trRow = document.createElement('tr');
+                    trRow.innerHTML = `
+                        <td>${row.code}</td>
+                        <td>${row.name}</td>
+                        <td class="number">${row.debit.toFixed(2)}</td>
+                        <td class="number">${row.credit.toFixed(2)}</td>
+                        <td class="number">${row.balance.toFixed(2)}</td>
+                    `;
+                    tbody.appendChild(trRow);
+                    totalDebit += row.debit;
+                    totalCredit += row.credit;
+                }
+            }
+
+            const diff = Math.abs(totalDebit - totalCredit);
+            const isBalanced = diff < 0.01;
+
+            document.getElementById('tb-debits').textContent = totalDebit.toFixed(2);
+            document.getElementById('tb-credits').textContent = totalCredit.toFixed(2);
+            document.getElementById('tb-diff').textContent = diff.toFixed(2);
+            
+            const statusEl = document.getElementById('tb-status');
+            if (isBalanced) {
+                statusEl.textContent = '✓ CUADRA';
+                statusEl.className = 'value status-balanced';
+            } else {
+                statusEl.textContent = '✗ NO CUADRA';
+                statusEl.className = 'value status-unbalanced';
+            }
+        }
+
+        function renderCashBook() {
+            const tbody = document.getElementById('cash-book-body');
+            const empty = document.getElementById('cash-book-empty');
+            tbody.innerHTML = '';
+
+            const cashBook = buildCashBook();
+            if (cashBook.length === 0) {
+                empty.style.display = 'block';
+                return;
+            }
+            empty.style.display = 'none';
+
+            let balance = 0;
+            for (const row of cashBook) {
+                balance += row.debit - row.credit;
+                const accountName = defaultAccounts.find(a => a.code === row.accountCode)?.name || row.accountCode;
+                const trRow = document.createElement('tr');
+                trRow.innerHTML = `
+                    <td>${row.date}</td>
+                    <td>${row.description}</td>
+                    <td>${row.document}</td>
+                    <td>${row.accountCode} - ${accountName}</td>
+                    <td class="number">${row.debit.toFixed(2)}</td>
+                    <td class="number">${row.credit.toFixed(2)}</td>
+                    <td class="number">${balance.toFixed(2)}</td>
+                `;
+                tbody.appendChild(trRow);
+            }
+        }
+
+        function renderDashboard() {
+            const { totalDebit, totalCredit } = getTotals();
+            const diff = Math.abs(totalDebit - totalCredit);
+            const isBalanced = diff < 0.01;
+
+            document.getElementById('total-debits').textContent = totalDebit.toFixed(2);
+            document.getElementById('total-credits').textContent = totalCredit.toFixed(2);
+            document.getElementById('total-diff').textContent = diff.toFixed(2);
+
+            const statusEl = document.getElementById('balance-status');
+            if (isBalanced) {
+                statusEl.textContent = '✓ EQUILIBRADO';
+                statusEl.className = 'value status-balanced';
+            } else {
+                statusEl.textContent = '✗ DESEQUILIBRADO';
+                statusEl.className = 'value status-unbalanced';
+            }
+
+            const cashBalance = calculateCashBalance();
+            document.getElementById('cash-balance').textContent = (cashBalance).toFixed(2);
+            document.getElementById('bank-balance').textContent = '0.00';
+            document.getElementById('total-available').textContent = (cashBalance).toFixed(2);
+            document.getElementById('entry-count').textContent = journalEntries.length;
+            document.getElementById('last-update').textContent = new Date().toLocaleString('es-PE');
+
+            const alertsDiv = document.getElementById('dashboard-alerts');
+            alertsDiv.innerHTML = '';
+            if (!isBalanced) {
+                alertsDiv.innerHTML = `<div class="alert alert-warning">⚠️ El sistema está desequilibrado. Verifica el Balance de Comprobación.</div>`;
+            } else {
+                alertsDiv.innerHTML = `<div class="alert alert-success">✓ El sistema está en equilibrio contable.</div>`;
+            }
+        }
+
+        function renderAccounts() {
+            const tbody = document.getElementById('accounts-body');
+            tbody.innerHTML = '';
+            for (const account of defaultAccounts) {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><strong>${account.code}</strong></td>
+                    <td>${account.name}</td>
+                    <td>${account.type}</td>
+                    <td>${account.nature}</td>
+                `;
+                tbody.appendChild(row);
+            }
+        }
+
+        function renderAll() {
+            renderJournal();
+            renderLedger();
+            renderTrialBalance();
+            renderCashBook();
+            renderDashboard();
+            renderAccounts();
+            saveToLocalStorage();
+        }
+
+        // ==================== FORMULARIO ====================
+        function addLineItem() {
+            const linesList = document.getElementById('lines-list');
+            const lineId = `line-${Date.now()}`;
+            const div = document.createElement('div');
+            div.className = 'line-item';
+            div.id = lineId;
+
+            const accountSelect = document.createElement('select');
+            accountSelect.innerHTML = '<option value="">-- Seleccionar Cuenta --</option>';
+            for (const account of defaultAccounts.filter(a => a.type === 'account')) {
+                accountSelect.innerHTML += `<option value="${account.code}">${account.code} - ${account.name}</option>`;
+            }
+
+            const debitInput = document.createElement('input');
+            debitInput.type = 'number';
+            debitInput.step = '0.01';
+            debitInput.placeholder = 'Debe';
+            debitInput.min = '0';
+
+            const creditInput = document.createElement('input');
+            creditInput.type = 'number';
+            creditInput.step = '0.01';
+            creditInput.placeholder = 'Haber';
+            creditInput.min = '0';
+
+            const removeBtn = document.createElement('button');
+            removeBtn.type = 'button';
+            removeBtn.className = 'btn btn-secondary';
+            removeBtn.textContent = 'Eliminar';
+            removeBtn.onclick = () => document.getElementById(lineId).remove();
+
+            div.appendChild(accountSelect);
+            div.appendChild(debitInput);
+            div.appendChild(creditInput);
+            div.appendChild(removeBtn);
+            linesList.appendChild(div);
+        }
+
+        function saveEntry() {
+            const date = document.getElementById('entry-date').value;
+            const description = document.getElementById('entry-description').value;
+            const document = document.getElementById('entry-document').value;
+
+            if (!date || !description) {
+                showMessage('Por favor completa Fecha y Descripción', 'error');
+                return;
+            }
+
+            const lines = [];
+            const lineElements = document.querySelectorAll('.line-item');
+            
+            for (const elem of lineElements) {
+                const select = elem.querySelector('select');
+                const debitInput = elem.querySelector('input[placeholder="Debe"]');
+                const creditInput = elem.querySelector('input[placeholder="Haber"]');
+
+                const accountCode = select.value;
+                const debit = parseFloat(debitInput.value) || 0;
+                const credit = parseFloat(creditInput.value) || 0;
+
+                if (!accountCode) {
+                    showMessage('Selecciona una cuenta en todas las líneas', 'error');
+                    return;
+                }
+
+                if (debit === 0 && credit === 0) {
+                    showMessage('Cada línea debe tener un monto en Debe o Haber', 'error');
+                    return;
+                }
+
+                if (debit > 0 && credit > 0) {
+                    showMessage('Una línea no puede tener monto tanto en Debe como en Haber', 'error');
+                    return;
+                }
+
+                lines.push({ accountCode, debit, credit });
+            }
+
+            if (lines.length === 0) {
+                showMessage('Agrega al menos una línea al asiento', 'error');
+                return;
+            }
+
+            const totalDebit = lines.reduce((sum, l) => sum + l.debit, 0);
+            const totalCredit = lines.reduce((sum, l) => sum + l.credit, 0);
+
+            if (Math.abs(totalDebit - totalCredit) > 0.01) {
+                showMessage(`Desbalance: Debe ${totalDebit.toFixed(2)} vs Haber ${totalCredit.toFixed(2)}`, 'error');
+                return;
+            }
+
+            const entry = {
+                id: `entry-${Date.now()}`,
+                date,
+                description,
+                document: document || 'SIN DOC',
+                lines
+            };
+
+            journalEntries.push(entry);
+            clearForm();
+            renderAll();
+            showMessage('Asiento guardado exitosamente', 'success');
+        }
+
+        function clearForm() {
+            document.getElementById('entry-date').value = '2026-01-15';
+            document.getElementById('entry-description').value = '';
+            document.getElementById('entry-document').value = '';
+            document.getElementById('lines-list').innerHTML = '';
+            addLineItem();
+        }
+
+        function showMessage(msg, type) {
+            const messageDiv = document.getElementById('entry-message');
+            messageDiv.className = `alert alert-${type}`;
+            messageDiv.textContent = msg;
+            setTimeout(() => messageDiv.innerHTML = '', 5000);
+        }
+
+        // ==================== NAVEGACIÓN ====================
+        document.querySelectorAll('.nav-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+                
+                btn.classList.add('active');
+                const tabId = btn.dataset.tab;
+                document.getElementById(tabId).classList.add('active');
+            });
+        });
+
+        // ==================== ALMACENAMIENTO ====================
+        function saveToLocalStorage() {
+            localStorage.setItem('journalEntries', JSON.stringify(journalEntries));
+        }
+
+        // ==================== INICIALIZACIÓN ====================
+        renderAll();
+        addLineItem();
+    </script>
+</body>
+</html>
